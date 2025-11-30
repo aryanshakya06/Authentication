@@ -1,0 +1,63 @@
+@import "tailwindcss";
+
+/* Base Toast Styling */
+.Toastify__toast {
+  border-radius: 10px !important;
+  padding: 14px 18px !important;
+  font-family: "Poppins", sans-serif !important;
+  font-size: 15px !important;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.1) !important;
+}
+
+/* Success Toast */
+.Toastify__toast--success {
+  background: #d4f8d4 !important;  /* light green */
+  color: #0f7a0f !important;       /* dark green text */
+  border-left: 6px solid #20c020 !important;
+}
+
+/* Error Toast */
+.Toastify__toast--error {
+  background: #ffe0e0 !important;  /* light red */
+  color: #b30000 !important;       /* dark red text */
+  border-left: 6px solid #ff4d4d !important;
+}
+
+/* Toast body text */
+.Toastify__toast-body {
+  color: inherit !important; /* use toast color */
+}
+
+/* Close Button */
+.Toastify__close-button {
+  color: inherit !important;
+  opacity: 0.6 !important;
+}
+.Toastify__close-button:hover {
+  opacity: 1 !important;
+}
+
+/* Progress bar for both */
+.Toastify__progress-bar {
+  background: rgba(0, 0, 0, 0.2) !important;
+}
+
+.Toastify__close-button {
+  color: inherit !important; /* match green/red text */
+  background: transparent !important;
+  border: none !important;
+  opacity: 0.7 !important;
+  font-size: 18px !important;
+  line-height: 1 !important;
+  padding: 1rem !important;
+  cursor: pointer;
+  transition:
+    transform 0.2s ease,
+    opacity 0.2s ease;
+}
+
+/* Hover: rotate slightly + scale + bump up */
+.Toastify__close-button:hover {
+  opacity: 1 !important;
+  transform: translateY(-2px) scale(1.1);
+}
