@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom';
-import api from '../../apiInterceptor.js';
+import api from '../lib/api.js';
 import Loading from './Loading.jsx';
 import { getErrorMessage } from '../lib/errors.js';
 

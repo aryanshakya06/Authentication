@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import api from "../../apiInterceptor.js";
+import api from "../lib/api.js";
 import { toast } from "react-toastify";
 
 const AppContext = createContext(null);

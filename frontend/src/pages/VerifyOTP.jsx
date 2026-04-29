@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
-import api from '../../apiInterceptor.js';
+import api from '../lib/api.js';
 import { AppData } from '../context/AppContext.jsx'
 import { showError } from '../lib/errors.js'
 

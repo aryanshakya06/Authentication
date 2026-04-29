@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import api from '../../apiInterceptor.js';
+import api from '../lib/api.js';
 import { showError } from '../lib/errors.js';
 
 const Register = () => {

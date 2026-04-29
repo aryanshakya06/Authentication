@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import api from '../../apiInterceptor';
+import api from '../lib/api.js';
 import { showError } from '../lib/errors.js';
 
 const Dashboard = () => {
