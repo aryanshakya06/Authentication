@@ -9,7 +9,7 @@ import SendmailTransport from "nodemailer/lib/sendmail-transport/index.js";
 import sendMail from "../config/sendMail.js";
 import { getOtpHtml, getVerifyEmailHtml } from "../config/html.js";
 import { success } from "zod";
-import { generateAccessToken, generateToken, revokeRefresToken, verifyRefreshToken } from "../config/generateToken.js";
+import { generateAccessToken, generateToken, revokeRefreshToken, verifyRefreshToken } from "../config/generateToken.js";
 import { generateCSRFToken } from "../config/csrfMiddleware.js";
 
 export const registerUser = tryCatch(async(req, res) => {
@@ -242,7 +242,7 @@ export const refreshToken = tryCatch( async(req, res) => {
 
 export const logoutUser = tryCatch(async(req, res) => {
     const userId = req.user._id;
-    await revokeRefresToken(userId);
+    await revokeRefreshToken(userId);
 
     res.clearCookie("refreshToken");
     res.clearCookie("accessToken");
