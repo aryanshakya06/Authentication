@@ -165,10 +165,15 @@ export const loginUser = tryCatch( async(req, res) => {
 })
 
 export const verifyOtp = tryCatch( async(req, res) => {
-    const { email, otp} = req.body;
+    const sanitizedBody = sanitize(req.body);
+    const { email, otp } = sanitizedBody;
 
     if(!email  || !otp) {
         return res.status(400).json({ success: false, message: "All fields are required"});
+    }
+
+    if (typeof email !== "string" || typeof otp !== "string") {
+        return res.status(400).json({ success: false, message: "Invalid request payload" });
     }
 
     const otpKey = `otp:${email}`;
