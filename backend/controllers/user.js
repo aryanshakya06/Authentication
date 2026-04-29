@@ -216,7 +216,7 @@ export const myProfile = tryCatch( async(req,res) => {
             lastActivity: parsedSession.lastActivity
         }
     }
-    res.json(user, sessionInfo);
+    res.json({ success: true, user, sessionInfo });
 })
 
 export const refreshToken = tryCatch( async(req, res) => {

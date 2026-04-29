@@ -26,10 +26,11 @@ export const isAuth = async(req, res, next) => {
             return res.status(401).json({success: false, message: "Session Expired"})
         }
 
+        req.sessionId = decodedData.sessionId;
+
         const cacheUser = await redisClient.get(`user:${decodedData.id}`);
         if(cacheUser) {
             req.user = JSON.parse(cacheUser);
-             
             return next();
         }
 
@@ -42,7 +43,6 @@ export const isAuth = async(req, res, next) => {
         await redisClient.setEx(`user:${user._id}`, 3600, JSON.stringify(user));
 
         req.user = user;
-        req.sessionId = decodedData.sessionId;
         next();
     } catch (err) {
         res.status(500).json({success: false, message: err.message});
