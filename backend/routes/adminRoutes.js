@@ -1,9 +1,9 @@
 import { Router } from 'express';
-import { authorizedAmin, isAuth } from '../middlewares/isAuth.js';
+import { authorizeAdmin, isAuth } from '../middlewares/isAuth.js';
 import { adminControlller } from '../controllers/adminController.js';
 
 const router = Router();
 
-router.route("/admin").get(isAuth, authorizedAmin, adminControlller);
+router.route("/admin").get(isAuth, authorizeAdmin, adminControlller);
 
 export default router;
