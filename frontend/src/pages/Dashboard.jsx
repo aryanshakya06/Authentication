@@ -4,27 +4,27 @@ import { showError } from '../lib/errors.js';
 
 const Dashboard = () => {
 
-  const [content, setContent] = useState("")
+  const [content, setContent] = useState("");
 
-  async function fetchAdminData() {
-       try {
-          const { data } = await api.get(`/api/v1/admin`);
-          setContent(data.message);
-       } catch (err) {
-          showError(err);
-       }
-  }
   useEffect(() => {
-    fetchAdminData();
-  }, [])
+    let cancelled = false;
+    (async () => {
+      try {
+        const { data } = await api.get(`/api/v1/admin`);
+        if (!cancelled) setContent(data.message);
+      } catch (err) {
+        if (!cancelled) showError(err);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, []);
 
   return (
     <>
-    {
-      content && <div>{content}</div>
-    }
+      {content && <div>{content}</div>}
     </>
-  )
+  );
 }
 
-export default Dashboard
+export default Dashboard;
+

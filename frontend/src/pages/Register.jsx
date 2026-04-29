@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import api from '../../apiInterceptor.js';
 import { showError } from '../lib/errors.js';
@@ -10,8 +10,6 @@ const Register = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [btnLoading, setBtnLoading] = useState(false);
-
-    const navigate = useNavigate();
 
     const submitHandler = async (e) => {
         setBtnLoading(true);
