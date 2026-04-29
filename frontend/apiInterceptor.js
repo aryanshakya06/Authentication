@@ -1,6 +1,7 @@
 import axios from "axios";
+import { API_URL } from "./src/config/env.js";
 
-const API_BASE_URL = (import.meta.env && import.meta.env.VITE_API_URL) || "http://localhost:5000";
+const API_BASE_URL = API_URL;
 
 const getCookie = (name) => {
     const value = `; ${document.cookie}`;
