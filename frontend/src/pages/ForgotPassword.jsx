@@ -1,0 +1,60 @@
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
+import api from "../lib/api.js";
+import { showError } from "../lib/errors.js";
+import { FormCard } from "../components/ui/FormCard.jsx";
+import { Input } from "../components/ui/Input.jsx";
+import { Button } from "../components/ui/Button.jsx";
+
+const ForgotPassword = () => {
+    const [email, setEmail] = useState("");
+    const [btnLoading, setBtnLoading] = useState(false);
+    const [sent, setSent] = useState(false);
+
+    const submit = async (e) => {
+        e.preventDefault();
+        setBtnLoading(true);
+        try {
+            const { data } = await api.post("/api/v1/forgot-password", { email });
+            toast.success(data.message);
+            setSent(true);
+        } catch (err) {
+            showError(err);
+        } finally {
+            setBtnLoading(false);
+        }
+    };
+
+    return (
+        <section className="flex min-h-[80vh] items-center justify-center px-6 py-12">
+            <FormCard
+                title="Forgot your password?"
+                subtitle="Enter your email and we'll send you a reset link if your account exists."
+                footer={<Link to="/login" className="text-indigo-700 hover:underline">Back to sign in</Link>}
+            >
+                {sent ? (
+                    <p className="text-sm text-gray-700">
+                        Check your inbox at <span className="font-medium">{email}</span> for a reset link.
+                    </p>
+                ) : (
+                    <form onSubmit={submit} className="flex flex-col gap-4">
+                        <Input
+                            type="email"
+                            label="Email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            required
+                            autoComplete="email"
+                        />
+                        <Button type="submit" loading={btnLoading} className="w-full">
+                            Send reset link
+                        </Button>
+                    </form>
+                )}
+            </FormCard>
+        </section>
+    );
+};
+
+export default ForgotPassword;

@@ -1,70 +1,96 @@
-import React, { useState } from 'react'
-import { Link } from 'react-router-dom';
-import { toast } from 'react-toastify';
-import api from '../lib/api.js';
-import { showError } from '../lib/errors.js';
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
+import api from "../lib/api.js";
+import { showError } from "../lib/errors.js";
+import { FormCard } from "../components/ui/FormCard.jsx";
+import { Input } from "../components/ui/Input.jsx";
+import { PasswordInput } from "../components/ui/PasswordInput.jsx";
+import { Button } from "../components/ui/Button.jsx";
 
 const Register = () => {
-
-    const [name, setName] = useState("")
+    const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [btnLoading, setBtnLoading] = useState(false);
+    const [sent, setSent] = useState(false);
 
-    const submitHandler = async (e) => {
-        setBtnLoading(true);
+    const submit = async (e) => {
         e.preventDefault();
+        setBtnLoading(true);
         try {
-            const { data } = await api.post(`/api/v1/register`, { name, email, password });
+            const { data } = await api.post("/api/v1/register", { name, email, password });
             toast.success(data.message);
             if (data.success) {
-                setName("");
-                setEmail("");
-                setPassword("");
+                setSent(true);
             }
         } catch (err) {
             showError(err);
         } finally {
             setBtnLoading(false);
         }
+    };
+
+    if (sent) {
+        return (
+            <section className="flex min-h-[80vh] items-center justify-center px-6 py-12">
+                <FormCard
+                    title="Check your inbox"
+                    subtitle={`We've sent a verification link to ${email}. Open it within 5 minutes to activate your account.`}
+                    footer={<Link to="/login" className="text-indigo-700 hover:underline">Back to sign in</Link>}
+                >
+                    <p className="text-sm text-gray-600">
+                        Didn&apos;t get an email? Check spam, or come back and re-register in a minute.
+                    </p>
+                </FormCard>
+            </section>
+        );
     }
 
-  return (
-    <section className="text-gray-600 body-font">
-  <div className="container px-5 py-24 mx-auto flex flex-wrap items-center">
-    <div className="lg:w-3/5 md:w-1/2 md:pr-16 lg:pr-0 pr-0">
-      <h1 className="title-font font-medium text-3xl text-gray-900">Slow-carb next level shoindcgoitch ethical authentic, poko scenester</h1>
-      <p className="leading-relaxed mt-4">Poke slow-carb mixtape knausgaard, typewriter street art gentrify hammock starladder roathse. Craies vegan tousled etsy austin.</p>
-    </div>
-    <form onSubmit={submitHandler} className="lg:w-2/6 md:w-1/2 bg-gray-100 rounded-lg p-8 flex flex-col md:ml-auto w-full mt-10 md:mt-0">
-      <h2 className="text-gray-900 text-lg font-medium title-font mb-5">Sign up</h2>
-      <div className="relative mb-4">
-        <label htmlFor="name" className="leading-7 text-sm text-gray-600">Full Name</label>
-        <input  type="text" id="name" name="name"
-        className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
-        value={name} onChange={e=>setName(e.target.value)} required/>
-      </div>
-      <div className="relative mb-4">
-        <label htmlFor="email" className="leading-7 text-sm text-gray-600">Email</label>
-        <input  type="email" id="email" name="email"
-        className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
-        value={email} onChange={e=>setEmail(e.target.value)} required/>
-      </div>
-      <div className="relative mb-4">
-        <label htmlFor="password" className="leading-7 text-sm text-gray-600">Password</label>
-        <input  type="password" id="password" name="password"
-        className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
-        value={password} onChange={e=>setPassword(e.target.value)} required/>
-      </div>
-      <button
-      className= {!btnLoading? "text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg cursor-pointer":
-        "text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg cursor-not-allowed"} disabled={btnLoading}>
-          {btnLoading? "Loading..." : "register"}</button>
-      <Link to="/login" className="text-xs text-gray-500 mt-3">Already have an account? Click Here to Login</Link>
-    </form>
-  </div>
-</section>
-  )
-}
+    return (
+        <section className="flex min-h-[80vh] items-center justify-center px-6 py-12">
+            <FormCard
+                title="Create your account"
+                subtitle="Sign up in seconds. We'll verify your email before activating the account."
+                footer={
+                    <>
+                        Already have an account?{" "}
+                        <Link to="/login" className="text-indigo-700 hover:underline">Sign in</Link>
+                    </>
+                }
+            >
+                <form onSubmit={submit} className="flex flex-col gap-4">
+                    <Input
+                        type="text"
+                        label="Full name"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        required
+                        autoComplete="name"
+                    />
+                    <Input
+                        type="email"
+                        label="Email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        required
+                        autoComplete="email"
+                    />
+                    <PasswordInput
+                        label="Password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        required
+                        autoComplete="new-password"
+                        helperText="At least 8 characters with upper, lower, number, and symbol."
+                    />
+                    <Button type="submit" loading={btnLoading} className="w-full">
+                        Create account
+                    </Button>
+                </form>
+            </FormCard>
+        </section>
+    );
+};
 
 export default Register;

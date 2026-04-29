@@ -1,34 +1,38 @@
-import React from 'react'
-import { BrowserRouter, Routes, Route} from 'react-router-dom'
-import Home from './pages/Home.jsx';
-import Login from './pages/Login.jsx';
+import React from 'react';
+import { BrowserRouter } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
-import VerifyOTP from './pages/VerifyOTP.jsx';
-import Loading from './pages/Loading.jsx';
-import { AppData } from './context/AppContext.jsx';
-import Register from './pages/Register.jsx';
-import Verify from './pages/Verify.jsx';
-import Dashboard from './pages/Dashboard.jsx';
+import { useAuth } from './hooks/useAuth.js';
+import { Spinner } from './components/ui/Spinner.jsx';
+import { Navbar } from './components/layout/Navbar.jsx';
+import { Footer } from './components/layout/Footer.jsx';
+import { ErrorBoundary } from './components/ErrorBoundary.jsx';
+import AppRoutes from './routes/AppRoutes.jsx';
 
 const App = () => {
+  const { loading } = useAuth();
 
-  const { isAuth, loading} = AppData();
+  if (loading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-gray-50">
+        <Spinner size="lg" label="Loading session..." />
+      </div>
+    );
+  }
 
   return (
-    <>
-    {loading ? <Loading/> : <BrowserRouter>
-    <Routes>
-      <Route path='/' element={ isAuth ? <Home/> : <Login />} />
-      <Route path='/login' element={ isAuth ? <Home/> : <Login />} />
-      <Route path='/register' element={ isAuth ? <Home/> : <Register />} />
-      <Route path='/verify-otp' element={ isAuth ? <Home/> : <VerifyOTP/>} />
-      <Route path='/token/:token' element={ isAuth ? <Home/> : <Verify/>} />
-      <Route path='/dashboard' element={ isAuth ? <Dashboard/> : <Login/>} />
-    </Routes>
-    <ToastContainer/>
-    </BrowserRouter>}
-    </>
-  )
-}
+    <ErrorBoundary>
+      <BrowserRouter>
+        <div className="flex min-h-screen flex-col bg-gray-50 text-gray-900">
+          <Navbar />
+          <main className="flex-1">
+            <AppRoutes />
+          </main>
+          <Footer />
+        </div>
+        <ToastContainer position="top-right" autoClose={3500} newestOnTop />
+      </BrowserRouter>
+    </ErrorBoundary>
+  );
+};
 
 export default App;
