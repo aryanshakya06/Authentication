@@ -1,11 +1,17 @@
 import jwt from 'jsonwebtoken';
-import { redisClient } from '../index.js';
-import { User } from '../models/User.js';
-import { isSessionActive } from '../config/generateToken.js';
+import { redisClient } from '../config/redis.js';
+import { User } from '../models/user.model.js';
+import { isSessionActive } from '../services/token.service.js';
+import {
+    ACCESS_COOKIE,
+    REFRESH_COOKIE,
+    CSRF_COOKIE,
+    clearCookieOptions
+} from '../constants/cookies.js';
 
 export const isAuth = async (req, res, next) => {
     try {
-        const token = req.cookies.accessToken;
+        const token = req.cookies[ACCESS_COOKIE];
 
         if (!token) {
             return res.status(401).json({
@@ -35,9 +41,9 @@ export const isAuth = async (req, res, next) => {
 
         const sessionActive = await isSessionActive(decodedData.id, decodedData.sessionId);
         if (!sessionActive) {
-            res.clearCookie("refreshToken");
-            res.clearCookie("accessToken");
-            res.clearCookie("csrfToken");
+            res.clearCookie(REFRESH_COOKIE, clearCookieOptions());
+            res.clearCookie(ACCESS_COOKIE, clearCookieOptions());
+            res.clearCookie(CSRF_COOKIE, { ...clearCookieOptions(), httpOnly: false });
             return res.status(401).json({
                 success: false,
                 message: "Session expired",
