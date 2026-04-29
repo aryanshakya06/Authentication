@@ -8,22 +8,39 @@ import cors from 'cors';
 import adminRoutes from './routes/adminRoutes.js';
 
 dotenv.config();
-await connectDB();
 
-const redisUrl = process.env.REDIS_URL;
-if(!redisUrl) {
-    console.log("Missing redis url");
-    process.exit(1);     
+const REQUIRED_ENV = [
+    "PORT",
+    "MONGODB_URI",
+    "REDIS_URL",
+    "FRONTEND_URL",
+    "SMTP_USER",
+    "SMTP_PASS",
+    "JWT_SECRET",
+    "REFRESH_SECRET"
+];
+
+const missing = REQUIRED_ENV.filter((key) => !process.env[key]);
+if (missing.length) {
+    console.error(`Missing required environment variables: ${missing.join(", ")}`);
+    console.error("Copy backend/.env.example to backend/.env and fill in the values.");
+    process.exit(1);
 }
 
+await connectDB();
+
 export const redisClient = createClient({
-    url: redisUrl
+    url: process.env.REDIS_URL
 });
 
-redisClient
-    .connect()
+redisClient.on("error", (err) => console.error("Redis client error:", err.message));
+
+await redisClient.connect()
     .then(() => console.log("Redis Connected"))
-    .catch(console.error)
+    .catch((err) => {
+        console.error("Redis connection failed:", err.message);
+        process.exit(1);
+    });
 
 const app = express();
 app.use(express.json());
