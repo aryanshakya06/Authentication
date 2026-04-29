@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import { toast } from 'react-toastify'
-import { server } from '../main.jsx';
 import api from '../../apiInterceptor';
+import { showError } from '../lib/errors.js';
 
 const Dashboard = () => {
 
@@ -9,12 +8,10 @@ const Dashboard = () => {
 
   async function fetchAdminData() {
        try {
-          const {data} = await api.get(`${server}/api/v1/admin`, {
-            withCredentials: true
-          });
+          const { data } = await api.get(`/api/v1/admin`);
           setContent(data.message);
-       } catch (error) {
-          toast.error(error.response.data.message);
+       } catch (err) {
+          showError(err);
        }
   }
   useEffect(() => {

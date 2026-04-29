@@ -1,33 +1,31 @@
 import React, { useState } from 'react'
-import {Link, useNavigate} from 'react-router-dom'
-import axios from 'axios'
-import {server} from '../main.jsx'  
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
+import api from '../../apiInterceptor.js';
 import { AppData } from '../context/AppContext.jsx'
+import { showError } from '../lib/errors.js'
 
 const VerifyOTP = () => {
 
   const [otp, setOtp] = useState("");
   const [btnLoading, setBtnLoading] = useState(false);
-  const email = localStorage.getItem("email");
   const navigate = useNavigate();
-  const {setIsAuth, setUser} = AppData();
+  const location = useLocation();
+  const email = location.state?.email;
+  const { setIsAuth, setUser } = AppData();
 
   const submitHandler = async (e) => {
     setBtnLoading(true);
     e.preventDefault();
     try {
-      const {data} = await axios.post(`${server}/api/v1/verify`, {email, otp}, {
-        withCredentials: true,
-      });
+      const { data } = await api.post(`/api/v1/verify`, { email, otp });
 
       toast.success(data.message);
       setIsAuth(true);
       setUser(data.user);
-      localStorage.clear("email");
       navigate("/");
     } catch (err) {
-      toast.error(err.response.data.message);
+      showError(err);
     } finally {
       setBtnLoading(false)
     }
@@ -44,7 +42,7 @@ const VerifyOTP = () => {
         <h2 className="text-gray-900 text-lg font-medium title-font mb-5">Verify Using OTP</h2>
         <div className="relative mb-4">
           <label htmlFor="otp" className="leading-7 text-sm text-gray-600">OTP</label>
-          <input  type="text" id="otp" name="otp" 
+          <input  type="text" id="otp" name="otp"
           className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
           value={otp} onChange={e=>setOtp(e.target.value)} required/>
         </div>
@@ -53,7 +51,7 @@ const VerifyOTP = () => {
         <Link to="/login" className="text-xs text-gray-500 mt-3">Go to login page</Link>
       </form>
     </div>
-  </section>  
+  </section>
   )
 }
 

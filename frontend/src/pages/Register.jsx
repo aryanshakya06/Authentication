@@ -1,9 +1,8 @@
-import React from 'react'
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom';
-import { server } from '../main';
-import axios from 'axios';
 import { toast } from 'react-toastify';
+import api from '../../apiInterceptor.js';
+import { showError } from '../lib/errors.js';
 
 const Register = () => {
 
@@ -18,16 +17,15 @@ const Register = () => {
         setBtnLoading(true);
         e.preventDefault();
         try {
-            const {data} = await axios.post(`${server}/api/v1/register`, {name, email, password});
+            const { data } = await api.post(`/api/v1/register`, { name, email, password });
             toast.success(data.message);
-            if(data.success) {
-              setName("");
-              setEmail("");
-              setPassword("");
-                // navigate("/")
+            if (data.success) {
+                setName("");
+                setEmail("");
+                setPassword("");
             }
         } catch (err) {
-            toast.error(err.response.data.message);
+            showError(err);
         } finally {
             setBtnLoading(false);
         }
@@ -44,30 +42,30 @@ const Register = () => {
       <h2 className="text-gray-900 text-lg font-medium title-font mb-5">Sign up</h2>
       <div className="relative mb-4">
         <label htmlFor="name" className="leading-7 text-sm text-gray-600">Full Name</label>
-        <input  type="text" id="name" name="name" 
+        <input  type="text" id="name" name="name"
         className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
         value={name} onChange={e=>setName(e.target.value)} required/>
       </div>
       <div className="relative mb-4">
         <label htmlFor="email" className="leading-7 text-sm text-gray-600">Email</label>
-        <input  type="email" id="email" name="email" 
+        <input  type="email" id="email" name="email"
         className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
         value={email} onChange={e=>setEmail(e.target.value)} required/>
       </div>
       <div className="relative mb-4">
         <label htmlFor="password" className="leading-7 text-sm text-gray-600">Password</label>
-        <input  type="password" id="password" name="password" 
+        <input  type="password" id="password" name="password"
         className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
         value={password} onChange={e=>setPassword(e.target.value)} required/>
       </div>
-      <button 
-      className= {!btnLoading? "text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg cursor-pointer": 
+      <button
+      className= {!btnLoading? "text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg cursor-pointer":
         "text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg cursor-not-allowed"} disabled={btnLoading}>
           {btnLoading? "Loading..." : "register"}</button>
       <Link to="/login" className="text-xs text-gray-500 mt-3">Already have an account? Click Here to Login</Link>
     </form>
   </div>
-</section>  
+</section>
   )
 }
 
