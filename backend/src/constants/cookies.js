@@ -1,10 +1,15 @@
 import { env } from "../config/env.js";
 
-const baseCookieOptions = () => ({
-    httpOnly: true,
-    secure: env.isProd,
-    sameSite: env.isProd ? "none" : "lax"
-});
+const baseCookieOptions = () => {
+    const opts = {
+        httpOnly: true,
+        secure: env.isProd,
+        sameSite: env.isProd ? "none" : "lax",
+        path: "/"
+    };
+    if (env.cookieDomain) opts.domain = env.cookieDomain;
+    return opts;
+};
 
 export const ACCESS_COOKIE = "accessToken";
 export const REFRESH_COOKIE = "refreshToken";
@@ -34,8 +39,4 @@ export const csrfCookieOptions = () => ({
     maxAge: CSRF_TTL_MS
 });
 
-export const clearCookieOptions = () => ({
-    httpOnly: true,
-    secure: env.isProd,
-    sameSite: env.isProd ? "none" : "lax"
-});
+export const clearCookieOptions = () => baseCookieOptions();
