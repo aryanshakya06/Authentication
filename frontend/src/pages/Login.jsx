@@ -38,7 +38,7 @@ const Login = () => {
                 footer={
                     <>
                         Don&apos;t have an account?{" "}
-                        <Link to="/register" className="text-indigo-700 hover:underline">Create one</Link>
+                        <Link to="/register" className="text-brand hover:underline">Create one</Link>
                     </>
                 }
             >
@@ -59,7 +59,7 @@ const Login = () => {
                         autoComplete="current-password"
                     />
                     <div className="flex justify-end -mt-2">
-                        <Link to="/forgot-password" className="text-xs text-gray-500 hover:text-gray-800">
+                        <Link to="/forgot-password" className="text-xs text-fg-faint hover:text-fg">
                             Forgot password?
                         </Link>
                     </div>

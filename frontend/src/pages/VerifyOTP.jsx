@@ -38,7 +38,7 @@ const VerifyOTP = () => {
             toast.success(data.message);
             setIsAuth(true);
             setUser(data.user);
-            navigate("/");
+            navigate("/home");
         } catch (err) {
             showError(err);
         } finally {
@@ -65,7 +65,7 @@ const VerifyOTP = () => {
             <FormCard
                 title="Enter your code"
                 subtitle={`We sent a 6-digit code to ${email || "your email"}. The code expires in 5 minutes.`}
-                footer={<Link to="/login" className="text-indigo-700 hover:underline">Back to sign in</Link>}
+                footer={<Link to="/login" className="text-brand hover:underline">Back to sign in</Link>}
             >
                 <form onSubmit={submit} className="flex flex-col gap-4">
                     <Input
@@ -86,7 +86,7 @@ const VerifyOTP = () => {
                         type="button"
                         onClick={resend}
                         disabled={cooldown > 0 || resendLoading}
-                        className="text-xs text-gray-500 hover:text-gray-800 disabled:cursor-not-allowed disabled:text-gray-400"
+                        className="text-xs text-fg-faint hover:text-fg disabled:cursor-not-allowed disabled:opacity-50"
                     >
                         {cooldown > 0
                             ? `Resend in ${cooldown}s`

@@ -40,7 +40,7 @@ const Verify = () => {
       <FormCard
         title={successMessage ? "Email verified" : "Verification failed"}
         subtitle={successMessage || errorMessage || ""}
-        footer={<Link to="/login" className="text-indigo-700 hover:underline">Back to sign in</Link>}
+        footer={<Link to="/login" className="text-brand hover:underline">Back to sign in</Link>}
       >
         <Link to="/login">
           <Button className="w-full">Continue to sign in</Button>

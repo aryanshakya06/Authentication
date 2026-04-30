@@ -37,9 +37,9 @@ const Register = () => {
                 <FormCard
                     title="Check your inbox"
                     subtitle={`We've sent a verification link to ${email}. Open it within 5 minutes to activate your account.`}
-                    footer={<Link to="/login" className="text-indigo-700 hover:underline">Back to sign in</Link>}
+                    footer={<Link to="/login" className="text-brand hover:underline">Back to sign in</Link>}
                 >
-                    <p className="text-sm text-gray-600">
+                    <p className="text-sm text-fg-muted">
                         Didn&apos;t get an email? Check spam, or come back and re-register in a minute.
                     </p>
                 </FormCard>
@@ -55,7 +55,7 @@ const Register = () => {
                 footer={
                     <>
                         Already have an account?{" "}
-                        <Link to="/login" className="text-indigo-700 hover:underline">Sign in</Link>
+                        <Link to="/login" className="text-brand hover:underline">Sign in</Link>
                     </>
                 }
             >

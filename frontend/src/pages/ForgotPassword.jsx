@@ -31,11 +31,11 @@ const ForgotPassword = () => {
             <FormCard
                 title="Forgot your password?"
                 subtitle="Enter your email and we'll send you a reset link if your account exists."
-                footer={<Link to="/login" className="text-indigo-700 hover:underline">Back to sign in</Link>}
+                footer={<Link to="/login" className="text-brand hover:underline">Back to sign in</Link>}
             >
                 {sent ? (
-                    <p className="text-sm text-gray-700">
-                        Check your inbox at <span className="font-medium">{email}</span> for a reset link.
+                    <p className="text-sm text-fg-muted">
+                        Check your inbox at <span className="font-medium text-fg">{email}</span> for a reset link.
                     </p>
                 ) : (
                     <form onSubmit={submit} className="flex flex-col gap-4">

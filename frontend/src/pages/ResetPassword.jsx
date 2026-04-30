@@ -40,7 +40,7 @@ const ResetPassword = () => {
             <FormCard
                 title="Choose a new password"
                 subtitle="Pick something strong - at least 8 characters with a mix of upper, lower, number, and symbol."
-                footer={<Link to="/login" className="text-indigo-700 hover:underline">Back to sign in</Link>}
+                footer={<Link to="/login" className="text-brand hover:underline">Back to sign in</Link>}
             >
                 <form onSubmit={submit} className="flex flex-col gap-4">
                     <PasswordInput
