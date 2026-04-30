@@ -14,13 +14,13 @@ export const PasswordInput = ({
     const describedById = helperText || error ? `${inputId}-help` : undefined;
 
     const borderClass = error
-        ? "border-red-400 focus:border-red-500 focus:ring-red-200"
-        : "border-gray-300 focus:border-indigo-500 focus:ring-indigo-200";
+        ? "border-danger focus:border-danger focus:ring-danger/30"
+        : "border-line focus:border-brand focus:ring-brand/25";
 
     return (
         <div className={`flex flex-col gap-1 ${className}`}>
             {label ? (
-                <label htmlFor={inputId} className="text-sm font-medium text-gray-700">
+                <label htmlFor={inputId} className="text-sm font-medium text-fg-muted">
                     {label}
                 </label>
             ) : null}
@@ -30,22 +30,23 @@ export const PasswordInput = ({
                     type={shown ? "text" : "password"}
                     aria-invalid={!!error}
                     aria-describedby={describedById}
-                    className={`w-full bg-white rounded-md border px-3 py-2 pr-10 text-base text-gray-900 outline-none transition focus:ring-2 ${borderClass}`}
+                    className={`w-full rounded-md border px-3 py-2 pr-16 text-base text-fg outline-none transition focus:ring-2 ${borderClass}`}
+                    style={{ background: "var(--bg-input)" }}
                     {...rest}
                 />
                 <button
                     type="button"
                     onClick={() => setShown((v) => !v)}
                     aria-label={shown ? "Hide password" : "Show password"}
-                    className="absolute inset-y-0 right-2 flex items-center px-2 text-xs font-medium text-gray-500 hover:text-gray-800"
+                    className="absolute inset-y-0 right-2 flex items-center px-2 text-xs font-medium text-fg-faint hover:text-fg"
                 >
                     {shown ? "Hide" : "Show"}
                 </button>
             </div>
             {error ? (
-                <p id={describedById} className="text-xs text-red-600">{error}</p>
+                <p id={describedById} className="text-xs text-danger">{error}</p>
             ) : helperText ? (
-                <p id={describedById} className="text-xs text-gray-500">{helperText}</p>
+                <p id={describedById} className="text-xs text-fg-faint">{helperText}</p>
             ) : null}
         </div>
     );

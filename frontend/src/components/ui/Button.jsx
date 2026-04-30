@@ -2,12 +2,13 @@ import React from "react";
 import { Spinner } from "./Spinner.jsx";
 
 const baseClasses =
-    "inline-flex items-center justify-center gap-2 rounded-md font-medium transition focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-500 disabled:opacity-60 disabled:cursor-not-allowed";
+    "inline-flex items-center justify-center gap-2 rounded-md font-medium transition focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-page focus-visible:ring-brand disabled:opacity-60 disabled:cursor-not-allowed";
 
 const variants = {
-    primary: "bg-indigo-600 text-white hover:bg-indigo-700",
-    ghost: "bg-transparent text-indigo-700 hover:bg-indigo-50 border border-indigo-200",
-    danger: "bg-red-600 text-white hover:bg-red-700"
+    primary: "bg-brand text-on-brand hover:bg-brand-hover",
+    ghost: "bg-transparent text-fg hover:bg-bg-muted border border-line",
+    outline: "bg-transparent text-brand hover:bg-brand-soft border border-brand",
+    danger: "bg-danger text-white hover:opacity-90"
 };
 
 const sizes = {

@@ -13,7 +13,7 @@ const App = () => {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gray-50">
+      <div className="flex min-h-screen items-center justify-center bg-page">
         <Spinner size="lg" label="Loading session..." />
       </div>
     );
@@ -22,7 +22,7 @@ const App = () => {
   return (
     <ErrorBoundary>
       <BrowserRouter>
-        <div className="flex min-h-screen flex-col bg-gray-50 text-gray-900">
+        <div className="flex min-h-screen flex-col bg-page text-fg">
           <Navbar />
           <main className="flex-1">
             <AppRoutes />

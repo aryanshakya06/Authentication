@@ -9,10 +9,10 @@ const sizes = {
 export const Spinner = ({ size = "md", className = "", label }) => (
     <div role="status" aria-label={label || "Loading"} className={`inline-flex items-center gap-2 ${className}`}>
         <span
-            className={`${sizes[size] || sizes.md} animate-spin rounded-full border-indigo-300 border-t-indigo-600`}
+            className={`${sizes[size] || sizes.md} animate-spin rounded-full border-brand-soft border-t-brand`}
             aria-hidden="true"
         />
-        {label ? <span className="text-sm text-gray-600">{label}</span> : null}
+        {label ? <span className="text-sm text-fg-muted">{label}</span> : null}
     </div>
 );
 
