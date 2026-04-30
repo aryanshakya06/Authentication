@@ -1,0 +1,29 @@
+/* Rose - modern pinkish light with rose accent. */
+
+[data-theme="rose"] {
+  color-scheme: light;
+
+  --bg:           #fff1f5;
+  --bg-elev:      #ffffff;
+  --bg-input:     #ffffff;
+  --bg-muted:     #ffe4ec;
+
+  --fg:           #4c0519;
+  --fg-muted:     #9f1239;
+  --fg-faint:     #be185d;
+
+  --line:         #fecdd3;
+  --line-strong:  #fda4af;
+
+  --brand:        #e11d48;
+  --brand-hover:  #be123c;
+  --brand-soft:   #ffe4ec;
+  --on-brand:     #ffffff;
+
+  --success:      #059669;
+  --danger:       #b91c1c;
+  --warning:      #d97706;
+
+  --ring:         rgba(225, 29, 72, 0.40);
+  --hero-grad:    linear-gradient(135deg, #e11d48 0%, #ec4899 100%);
+}

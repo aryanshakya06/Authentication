@@ -1,15 +1,35 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="authly">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="Authly - secure authentication: email verification, JWT + Redis sessions, OTP-based 2FA, CSRF protection." />
-    <meta name="color-scheme" content="light" />
+    <meta name="color-scheme" content="light dark" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" />
-    <title>Authly &middot; Sign in</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" />
+    <title>Authly &middot; Secure authentication, batteries included</title>
+    <!--
+      FOUC prevention: read the persisted theme synchronously, before any CSS
+      or React. Sets the data-theme attribute so the very first paint uses
+      the right tokens. Must run inline (no module loader) to be blocking.
+    -->
+    <script>
+      (function () {
+        try {
+          var VALID = ["authly","rose","mint","purple-night","midnight-blue","obsidian"];
+          var DEFAULT = "authly";
+          var STORAGE_KEY = "authly:theme";
+          var stored = null;
+          try { stored = localStorage.getItem(STORAGE_KEY); } catch (e) {}
+          var pick = (stored && VALID.indexOf(stored) !== -1) ? stored : DEFAULT;
+          document.documentElement.setAttribute("data-theme", pick);
+        } catch (e) {
+          document.documentElement.setAttribute("data-theme", "authly");
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

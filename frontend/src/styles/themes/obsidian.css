@@ -1,0 +1,29 @@
+/* Obsidian - all dark, monochrome with white accent. */
+
+[data-theme="obsidian"] {
+  color-scheme: dark;
+
+  --bg:           #050505;
+  --bg-elev:      #0d0d0d;
+  --bg-input:     #161616;
+  --bg-muted:     #0a0a0a;
+
+  --fg:           #fafafa;
+  --fg-muted:     #a3a3a3;
+  --fg-faint:     #737373;
+
+  --line:         #262626;
+  --line-strong:  #404040;
+
+  --brand:        #ffffff;
+  --brand-hover:  #e5e5e5;
+  --brand-soft:   rgba(255, 255, 255, 0.08);
+  --on-brand:     #050505;
+
+  --success:      #4ade80;
+  --danger:       #f87171;
+  --warning:      #facc15;
+
+  --ring:         rgba(255, 255, 255, 0.35);
+  --hero-grad:    linear-gradient(135deg, #1f1f1f 0%, #ffffff 100%);
+}

@@ -1,0 +1,29 @@
+/* Purple Night - modern purplish dark with magenta accent. */
+
+[data-theme="purple-night"] {
+  color-scheme: dark;
+
+  --bg:           #160a26;
+  --bg-elev:      #20133a;
+  --bg-input:     #2a1a47;
+  --bg-muted:     #1a0f30;
+
+  --fg:           #f5e8ff;
+  --fg-muted:     #d8b4fe;
+  --fg-faint:     #a78bda;
+
+  --line:         #3a1f63;
+  --line-strong:  #4c2780;
+
+  --brand:        #d946ef;
+  --brand-hover:  #c026d3;
+  --brand-soft:   rgba(217, 70, 239, 0.14);
+  --on-brand:     #ffffff;
+
+  --success:      #4ade80;
+  --danger:       #f87171;
+  --warning:      #fbbf24;
+
+  --ring:         rgba(217, 70, 239, 0.55);
+  --hero-grad:    linear-gradient(135deg, #6b21a8 0%, #d946ef 100%);
+}

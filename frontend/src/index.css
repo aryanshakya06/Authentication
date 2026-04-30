@@ -1,51 +1,97 @@
 @import "tailwindcss";
 
+/* Theme tokens. _base.css holds shared constants;
+   each theme/<name>.css declares one [data-theme="..."] block. */
+@import "./styles/themes/_base.css";
+@import "./styles/themes/authly.css";
+@import "./styles/themes/rose.css";
+@import "./styles/themes/mint.css";
+@import "./styles/themes/purple-night.css";
+@import "./styles/themes/midnight-blue.css";
+@import "./styles/themes/obsidian.css";
+
+/* Expose the theme variables as Tailwind v4 color utilities so
+   bg-page, bg-card, text-fg, bg-brand, etc. work in JSX directly. */
+@theme inline {
+  --color-page:         var(--bg);
+  --color-card:         var(--bg-elev);
+  --color-input:        var(--bg-input);
+  --color-bg-muted:     var(--bg-muted);
+
+  --color-fg:           var(--fg);
+  --color-fg-muted:     var(--fg-muted);
+  --color-fg-faint:     var(--fg-faint);
+
+  --color-line:         var(--line);
+  --color-line-strong:  var(--line-strong);
+
+  --color-brand:        var(--brand);
+  --color-brand-hover:  var(--brand-hover);
+  --color-brand-soft:   var(--brand-soft);
+  --color-on-brand:     var(--on-brand);
+
+  --color-success:      var(--success);
+  --color-danger:       var(--danger);
+  --color-warning:      var(--warning);
+}
+
+/* Page-level paint comes from CSS vars so theme changes apply globally
+   without touching any JSX. */
 html, body, #root {
   height: 100%;
 }
 
 body {
+  background-color: var(--bg);
+  color: var(--fg);
   font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  transition: background-color var(--transition), color var(--transition);
 }
 
-/* Toastify styling */
+* {
+  border-color: var(--line);
+}
+
+::selection {
+  background: var(--brand);
+  color: var(--on-brand);
+}
+
+/* Custom scrollbar that follows the theme. */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--bg-muted); }
+::-webkit-scrollbar-thumb { background: var(--line-strong); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { background: var(--fg-faint); }
+
+/* Toastify - inherit theme colors */
 .Toastify__toast {
-  border-radius: 10px !important;
+  border-radius: var(--radius-md) !important;
   padding: 14px 18px !important;
   font-family: "Inter", sans-serif !important;
-  font-size: 15px !important;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08) !important;
+  font-size: 14px !important;
+  background: var(--bg-elev) !important;
+  color: var(--fg) !important;
+  border: 1px solid var(--line) !important;
+  box-shadow: var(--shadow-elev) !important;
 }
 .Toastify__toast--success {
-  background: #d4f8d4 !important;
-  color: #0f7a0f !important;
-  border-left: 6px solid #20c020 !important;
+  border-left: 4px solid var(--success) !important;
 }
 .Toastify__toast--error {
-  background: #ffe0e0 !important;
-  color: #b30000 !important;
-  border-left: 6px solid #ff4d4d !important;
-}
-.Toastify__toast-body {
-  color: inherit !important;
+  border-left: 4px solid var(--danger) !important;
 }
 .Toastify__close-button {
-  color: inherit !important;
+  color: var(--fg-faint) !important;
   background: transparent !important;
   border: none !important;
-  opacity: 0.6 !important;
-  font-size: 18px !important;
-  line-height: 1 !important;
-  padding: 1rem !important;
+  opacity: 0.7 !important;
   cursor: pointer;
-  transition: transform 0.2s ease, opacity 0.2s ease;
+  transition: opacity var(--transition);
 }
-.Toastify__close-button:hover {
-  opacity: 1 !important;
-  transform: translateY(-2px) scale(1.1);
-}
+.Toastify__close-button:hover { opacity: 1 !important; }
 .Toastify__progress-bar {
-  background: rgba(0, 0, 0, 0.2) !important;
+  background: var(--brand) !important;
+  opacity: 0.6 !important;
 }

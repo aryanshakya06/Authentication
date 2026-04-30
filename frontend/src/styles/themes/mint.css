@@ -1,0 +1,29 @@
+/* Mint - modern greenish/tealish light with teal accent. */
+
+[data-theme="mint"] {
+  color-scheme: light;
+
+  --bg:           #effdf7;
+  --bg-elev:      #ffffff;
+  --bg-input:     #ffffff;
+  --bg-muted:     #d4f8e8;
+
+  --fg:           #022c22;
+  --fg-muted:     #115e59;
+  --fg-faint:     #0f766e;
+
+  --line:         #99f6e4;
+  --line-strong:  #5eead4;
+
+  --brand:        #14b8a6;
+  --brand-hover:  #0d9488;
+  --brand-soft:   #ccfbf1;
+  --on-brand:     #ffffff;
+
+  --success:      #047857;
+  --danger:       #b91c1c;
+  --warning:      #b45309;
+
+  --ring:         rgba(20, 184, 166, 0.40);
+  --hero-grad:    linear-gradient(135deg, #0d9488 0%, #34d399 100%);
+}
