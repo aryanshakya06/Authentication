@@ -1,0 +1,63 @@
+# Render Infrastructure-as-Code blueprint for the Authly backend.
+# https://render.com/docs/blueprint-spec
+#
+# Click "New > Blueprint" in the Render dashboard, point it at this repo, and
+# Render will provision the API service. Then fill in the secret env vars
+# (marked sync: false) in the Environment tab and trigger a deploy.
+
+services:
+  - type: web
+    name: authly-api
+    runtime: node
+    plan: free
+    rootDir: backend
+    region: oregon
+    branch: main
+    buildCommand: npm ci
+    startCommand: npm start
+    healthCheckPath: /api/v1/health
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: APP_NAME
+        value: Authly
+      - key: TRUST_PROXY
+        value: "1"
+
+      # Set after the Vercel project is live. Comma-separated list is
+      # supported, so preview URLs can be allowlisted alongside prod.
+      - key: FRONTEND_URL
+        sync: false
+
+      # Optional: scope cookies to a parent domain like ".example.com" so
+      # cookies set on api.example.com flow on requests from app.example.com.
+      # Leave empty otherwise.
+      - key: COOKIE_DOMAIN
+        sync: false
+
+      - key: MONGODB_URI
+        sync: false
+      - key: REDIS_URL
+        sync: false
+
+      # SMTP. Defaults to Gmail. For Resend, set:
+      #   SMTP_HOST=smtp.resend.com  SMTP_PORT=465  SMTP_USER=resend
+      #   SMTP_PASS=<resend api key>
+      - key: SMTP_HOST
+        sync: false
+      - key: SMTP_PORT
+        sync: false
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASS
+        sync: false
+      - key: SMTP_FROM
+        sync: false
+
+      # Generate fresh values with: cd backend && npm run gen-secrets
+      # Both must be 64-byte hex and DIFFERENT from each other.
+      - key: JWT_SECRET
+        sync: false
+      - key: REFRESH_SECRET
+        sync: false
