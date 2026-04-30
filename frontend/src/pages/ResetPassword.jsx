@@ -36,31 +36,25 @@ const ResetPassword = () => {
     };
 
     return (
-        <section className="flex min-h-[80vh] items-center justify-center px-6 py-12">
+        <section className="center-screen">
             <FormCard
                 title="Choose a new password"
                 subtitle="Pick something strong - at least 8 characters with a mix of upper, lower, number, and symbol."
-                footer={<Link to="/login" className="text-brand hover:underline">Back to sign in</Link>}
+                footer={<Link to="/login">Back to sign in</Link>}
             >
-                <form onSubmit={submit} className="flex flex-col gap-4">
+                <form onSubmit={submit} className="stack stack--lg">
                     <PasswordInput
-                        label="New password"
-                        value={password}
+                        label="New password" value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        required
-                        autoComplete="new-password"
+                        required autoComplete="new-password"
                     />
                     <PasswordInput
-                        label="Confirm new password"
-                        value={confirm}
+                        label="Confirm new password" value={confirm}
                         onChange={(e) => setConfirm(e.target.value)}
-                        required
-                        autoComplete="new-password"
+                        required autoComplete="new-password"
                         error={error}
                     />
-                    <Button type="submit" loading={btnLoading} className="w-full">
-                        Reset password
-                    </Button>
+                    <Button type="submit" loading={btnLoading} block>Reset password</Button>
                 </form>
             </FormCard>
         </section>

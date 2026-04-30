@@ -61,13 +61,13 @@ const VerifyOTP = () => {
     };
 
     return (
-        <section className="flex min-h-[80vh] items-center justify-center px-6 py-12">
+        <section className="center-screen">
             <FormCard
                 title="Enter your code"
                 subtitle={`We sent a 6-digit code to ${email || "your email"}. The code expires in 5 minutes.`}
-                footer={<Link to="/login" className="text-brand hover:underline">Back to sign in</Link>}
+                footer={<Link to="/login">Back to sign in</Link>}
             >
-                <form onSubmit={submit} className="flex flex-col gap-4">
+                <form onSubmit={submit} className="stack stack--lg">
                     <Input
                         autoFocus
                         label="Verification code"
@@ -79,14 +79,13 @@ const VerifyOTP = () => {
                         autoComplete="one-time-code"
                         required
                     />
-                    <Button type="submit" loading={btnLoading} className="w-full">
-                        Verify and continue
-                    </Button>
+                    <Button type="submit" loading={btnLoading} block>Verify and continue</Button>
                     <button
                         type="button"
                         onClick={resend}
                         disabled={cooldown > 0 || resendLoading}
-                        className="text-xs text-fg-faint hover:text-fg disabled:cursor-not-allowed disabled:opacity-50"
+                        className="txt-xs faint"
+                        style={{ opacity: (cooldown > 0 || resendLoading) ? 0.5 : 1 }}
                     >
                         {cooldown > 0
                             ? `Resend in ${cooldown}s`

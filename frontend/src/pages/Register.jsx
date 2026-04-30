@@ -21,9 +21,7 @@ const Register = () => {
         try {
             const { data } = await api.post("/api/v1/register", { name, email, password });
             toast.success(data.message);
-            if (data.success) {
-                setSent(true);
-            }
+            if (data.success) setSent(true);
         } catch (err) {
             showError(err);
         } finally {
@@ -33,13 +31,13 @@ const Register = () => {
 
     if (sent) {
         return (
-            <section className="flex min-h-[80vh] items-center justify-center px-6 py-12">
+            <section className="center-screen">
                 <FormCard
                     title="Check your inbox"
                     subtitle={`We've sent a verification link to ${email}. Open it within 5 minutes to activate your account.`}
-                    footer={<Link to="/login" className="text-brand hover:underline">Back to sign in</Link>}
+                    footer={<Link to="/login">Back to sign in</Link>}
                 >
-                    <p className="text-sm text-fg-muted">
+                    <p className="muted txt-md">
                         Didn&apos;t get an email? Check spam, or come back and re-register in a minute.
                     </p>
                 </FormCard>
@@ -48,45 +46,30 @@ const Register = () => {
     }
 
     return (
-        <section className="flex min-h-[80vh] items-center justify-center px-6 py-12">
+        <section className="center-screen">
             <FormCard
                 title="Create your account"
                 subtitle="Sign up in seconds. We'll verify your email before activating the account."
-                footer={
-                    <>
-                        Already have an account?{" "}
-                        <Link to="/login" className="text-brand hover:underline">Sign in</Link>
-                    </>
-                }
+                footer={<>Already have an account? <Link to="/login">Sign in</Link></>}
             >
-                <form onSubmit={submit} className="flex flex-col gap-4">
+                <form onSubmit={submit} className="stack stack--lg">
                     <Input
-                        type="text"
-                        label="Full name"
-                        value={name}
+                        type="text" label="Full name" value={name}
                         onChange={(e) => setName(e.target.value)}
-                        required
-                        autoComplete="name"
+                        required autoComplete="name"
                     />
                     <Input
-                        type="email"
-                        label="Email"
-                        value={email}
+                        type="email" label="Email" value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        required
-                        autoComplete="email"
+                        required autoComplete="email"
                     />
                     <PasswordInput
-                        label="Password"
-                        value={password}
+                        label="Password" value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        required
-                        autoComplete="new-password"
+                        required autoComplete="new-password"
                         helperText="At least 8 characters with upper, lower, number, and symbol."
                     />
-                    <Button type="submit" loading={btnLoading} className="w-full">
-                        Create account
-                    </Button>
+                    <Button type="submit" loading={btnLoading} block>Create account</Button>
                 </form>
             </FormCard>
         </section>

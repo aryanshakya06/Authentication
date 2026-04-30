@@ -6,72 +6,70 @@ import { Spinner } from "../components/ui/Spinner.jsx";
 import { Button } from "../components/ui/Button.jsx";
 
 const Dashboard = () => {
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
+    const [data, setData] = useState(null);
+    const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      try {
-        const { data: payload } = await api.get("/api/v1/admin");
-        if (!cancelled) setData(payload);
-      } catch (err) {
-        if (!cancelled) showError(err);
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
-    })();
-    return () => { cancelled = true; };
-  }, []);
+    useEffect(() => {
+        let cancelled = false;
+        (async () => {
+            try {
+                const { data: payload } = await api.get("/api/v1/admin");
+                if (!cancelled) setData(payload);
+            } catch (err) {
+                if (!cancelled) showError(err);
+            } finally {
+                if (!cancelled) setLoading(false);
+            }
+        })();
+        return () => { cancelled = true; };
+    }, []);
 
-  if (loading) {
+    if (loading) {
+        return (
+            <div className="center-screen">
+                <Spinner size="lg" label="Loading admin data..." />
+            </div>
+        );
+    }
+
+    if (!data) {
+        return (
+            <div className="container muted" style={{ padding: "64px 24px" }}>
+                Unable to load admin data.
+            </div>
+        );
+    }
+
     return (
-      <div className="flex min-h-[60vh] items-center justify-center">
-        <Spinner size="lg" label="Loading admin data..." />
-      </div>
+        <section className="container container--narrow" style={{ padding: "48px 24px" }}>
+            <div className="row row--top row--spread">
+                <div>
+                    <p className="eyebrow">Admin</p>
+                    <h1 className="h-1" style={{ marginTop: 4 }}>Dashboard</h1>
+                    <p className="muted" style={{ marginTop: 8 }}>{data.message}</p>
+                </div>
+                <Link to="/home"><Button variant="ghost" size="sm">Back to home</Button></Link>
+            </div>
+
+            <div className="grid grid-3" style={{ marginTop: 32 }}>
+                <div className="tile">
+                    <p className="tile__label">Total users</p>
+                    <p className="tile__value" style={{ fontSize: 32 }}>{data.data?.totalUsers ?? "-"}</p>
+                    <p className="tile__hint">Live MongoDB count</p>
+                </div>
+                <div className="tile">
+                    <p className="tile__label">API status</p>
+                    <p className="tile__value success">Healthy</p>
+                    <p className="tile__hint">Mongo + Redis connected</p>
+                </div>
+                <div className="tile">
+                    <p className="tile__label">Your role</p>
+                    <p className="tile__value tile__value--brand">admin</p>
+                    <p className="tile__hint">authorizeAdmin middleware</p>
+                </div>
+            </div>
+        </section>
     );
-  }
-
-  if (!data) {
-    return (
-      <div className="mx-auto max-w-3xl px-6 py-16 text-fg-muted">
-        Unable to load admin data.
-      </div>
-    );
-  }
-
-  return (
-    <section className="mx-auto max-w-4xl px-6 py-12">
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <p className="text-sm font-semibold uppercase tracking-wider text-brand">Admin</p>
-          <h1 className="mt-1 text-3xl font-semibold text-fg">Dashboard</h1>
-          <p className="mt-2 text-fg-muted">{data.message}</p>
-        </div>
-        <Link to="/home">
-          <Button variant="ghost" size="sm">Back to home</Button>
-        </Link>
-      </div>
-
-      <div className="mt-8 grid gap-4 sm:grid-cols-3">
-        <div className="rounded-xl border border-line bg-card p-5">
-          <p className="text-xs uppercase tracking-wide text-fg-faint">Total users</p>
-          <p className="mt-1 text-3xl font-bold text-fg">{data.data?.totalUsers ?? "-"}</p>
-          <p className="mt-1 text-xs text-fg-faint">Live MongoDB count</p>
-        </div>
-        <div className="rounded-xl border border-line bg-card p-5">
-          <p className="text-xs uppercase tracking-wide text-fg-faint">API status</p>
-          <p className="mt-1 text-2xl font-semibold text-success">Healthy</p>
-          <p className="mt-1 text-xs text-fg-faint">Mongo + Redis connected</p>
-        </div>
-        <div className="rounded-xl border border-line bg-card p-5">
-          <p className="text-xs uppercase tracking-wide text-fg-faint">Your role</p>
-          <p className="mt-1 text-2xl font-semibold text-brand">admin</p>
-          <p className="mt-1 text-xs text-fg-faint">authorizeAdmin middleware</p>
-        </div>
-      </div>
-    </section>
-  );
 };
 
 export default Dashboard;

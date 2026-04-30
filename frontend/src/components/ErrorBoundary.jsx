@@ -19,16 +19,17 @@ export class ErrorBoundary extends React.Component {
     render() {
         if (this.state.hasError) {
             return (
-                <div className="flex min-h-screen items-center justify-center bg-page p-6">
-                    <div className="max-w-md rounded-2xl border border-line bg-card p-8 text-center shadow-sm">
-                        <h1 className="text-xl font-semibold text-fg">Something went wrong</h1>
-                        <p className="mt-2 text-sm text-fg-muted">
+                <div className="center-screen center-screen--full">
+                    <div className="form-card text-center">
+                        <h1 className="form-card__title">Something went wrong</h1>
+                        <p style={{ marginTop: 8, fontSize: 14, color: "var(--fg-muted)" }}>
                             An unexpected error occurred. Reloading the page usually fixes it.
                         </p>
                         <button
                             type="button"
                             onClick={this.handleReload}
-                            className="mt-6 inline-flex items-center justify-center rounded-md bg-brand px-4 py-2 text-on-brand hover:bg-brand-hover"
+                            className="btn btn--primary"
+                            style={{ marginTop: 24 }}
                         >
                             Reload page
                         </button>

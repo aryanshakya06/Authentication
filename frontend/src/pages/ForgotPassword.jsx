@@ -27,29 +27,24 @@ const ForgotPassword = () => {
     };
 
     return (
-        <section className="flex min-h-[80vh] items-center justify-center px-6 py-12">
+        <section className="center-screen">
             <FormCard
                 title="Forgot your password?"
                 subtitle="Enter your email and we'll send you a reset link if your account exists."
-                footer={<Link to="/login" className="text-brand hover:underline">Back to sign in</Link>}
+                footer={<Link to="/login">Back to sign in</Link>}
             >
                 {sent ? (
-                    <p className="text-sm text-fg-muted">
-                        Check your inbox at <span className="font-medium text-fg">{email}</span> for a reset link.
+                    <p className="muted txt-md">
+                        Check your inbox at <span className="weight-medium" style={{ color: "var(--fg)" }}>{email}</span> for a reset link.
                     </p>
                 ) : (
-                    <form onSubmit={submit} className="flex flex-col gap-4">
+                    <form onSubmit={submit} className="stack stack--lg">
                         <Input
-                            type="email"
-                            label="Email"
-                            value={email}
+                            type="email" label="Email" value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            required
-                            autoComplete="email"
+                            required autoComplete="email"
                         />
-                        <Button type="submit" loading={btnLoading} className="w-full">
-                            Send reset link
-                        </Button>
+                        <Button type="submit" loading={btnLoading} block>Send reset link</Button>
                     </form>
                 )}
             </FormCard>

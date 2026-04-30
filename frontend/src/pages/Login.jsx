@@ -20,9 +20,7 @@ const Login = () => {
         try {
             const { data } = await api.post("/api/v1/login", { email, password });
             toast.success(data.message);
-            if (data.success) {
-                navigate("/verify-otp", { state: { email } });
-            }
+            if (data.success) navigate("/verify-otp", { state: { email } });
         } catch (err) {
             showError(err);
         } finally {
@@ -31,41 +29,27 @@ const Login = () => {
     };
 
     return (
-        <section className="flex min-h-[80vh] items-center justify-center px-6 py-12">
+        <section className="center-screen">
             <FormCard
                 title="Welcome back"
                 subtitle="Sign in to your account. We'll email you a one-time code to confirm it's really you."
-                footer={
-                    <>
-                        Don&apos;t have an account?{" "}
-                        <Link to="/register" className="text-brand hover:underline">Create one</Link>
-                    </>
-                }
+                footer={<>Don&apos;t have an account? <Link to="/register">Create one</Link></>}
             >
-                <form onSubmit={submit} className="flex flex-col gap-4">
+                <form onSubmit={submit} className="stack stack--lg">
                     <Input
-                        type="email"
-                        label="Email"
-                        value={email}
+                        type="email" label="Email" value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        required
-                        autoComplete="email"
+                        required autoComplete="email"
                     />
                     <PasswordInput
-                        label="Password"
-                        value={password}
+                        label="Password" value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        required
-                        autoComplete="current-password"
+                        required autoComplete="current-password"
                     />
-                    <div className="flex justify-end -mt-2">
-                        <Link to="/forgot-password" className="text-xs text-fg-faint hover:text-fg">
-                            Forgot password?
-                        </Link>
+                    <div className="row row--end" style={{ marginTop: -8 }}>
+                        <Link to="/forgot-password" className="txt-xs faint">Forgot password?</Link>
                     </div>
-                    <Button type="submit" loading={btnLoading} className="w-full">
-                        Continue
-                    </Button>
+                    <Button type="submit" loading={btnLoading} block>Continue</Button>
                 </form>
             </FormCard>
         </section>

@@ -23,48 +23,38 @@ export const Navbar = () => {
 
     return (
         <>
-            <header className="sticky top-0 z-30 border-b border-line bg-card/80 backdrop-blur">
-                <nav className="mx-auto flex max-w-6xl items-center justify-between px-6 py-3">
-                    <Link to="/" className="flex items-center gap-2 font-semibold text-fg">
-                        <span
-                            className="inline-flex h-8 w-8 items-center justify-center rounded-md bg-brand text-on-brand text-sm font-bold"
-                        >
-                            A
-                        </span>
+            <header className="navbar">
+                <nav className="navbar__inner">
+                    <Link to="/" className="brand">
+                        <span className="brand__mark">A</span>
                         <span>{APP_NAME}</span>
                     </Link>
 
-                    <div className="flex items-center gap-2 text-sm">
+                    <div className="navbar__actions">
                         <button
                             type="button"
                             onClick={() => setPickerOpen(true)}
-                            className="inline-flex items-center gap-2 rounded-md border border-line bg-card px-3 py-1.5 text-fg hover:bg-bg-muted"
+                            className="btn btn--ghost btn--sm"
                             aria-label="Choose theme"
                         >
                             <PaletteIcon />
-                            <span className="hidden sm:inline">Themes</span>
+                            <span className="hide-sm">Themes</span>
                         </button>
 
                         {isAuth ? (
                             <>
-                                <Link to="/home" className="hidden text-fg-muted hover:text-fg sm:inline-block px-2">
-                                    Home
-                                </Link>
+                                <Link to="/home" className="hide-sm">Home</Link>
                                 {user?.role === "admin" ? (
-                                    <Link to="/dashboard" className="text-brand hover:underline px-2">
-                                        Admin
-                                    </Link>
+                                    <Link to="/dashboard" style={{ color: "var(--brand)" }}>Admin</Link>
                                 ) : null}
-                                <span className="hidden text-fg-faint md:inline">{user?.email}</span>
+                                <span className="navbar__email hide-sm">{user?.email}</span>
                                 <Button variant="ghost" size="sm" onClick={() => logoutUser(navigate)}>
                                     Logout
                                 </Button>
                             </>
                         ) : (
                             <>
-                                <Link to="/login" className="text-fg-muted hover:text-fg px-2">
-                                    Sign in
-                                </Link>
+                                <Link to="/login">Sign in</Link>
                                 <Link to="/register">
                                     <Button size="sm">Get started</Button>
                                 </Link>
