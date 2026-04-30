@@ -2,9 +2,9 @@
 
 Base URL: `http://localhost:5000/api/v1`
 
-All POST/PUT/PATCH/DELETE requests on protected endpoints must send the
-`x-csrf-token` header. The frontend `axios` instance does this automatically;
-clients integrating manually must read the `csrfToken` cookie value and copy
+All POST, PUT, PATCH and DELETE requests on protected endpoints must send the
+`x-csrf-token` header. The frontend `axios` instance does this automatically.
+Clients integrating manually must read the `csrfToken` cookie value and copy
 it into that header.
 
 All responses share a JSON envelope:
@@ -15,7 +15,7 @@ All responses share a JSON envelope:
 ```
 
 Errors include a `requestId` field that matches the `X-Request-Id` response
-header — useful for log correlation.
+header. Useful for log correlation.
 
 ---
 
@@ -58,10 +58,10 @@ Success `200`:
 ```
 
 Error codes:
-- `400 VALIDATION_FAILED` — Zod validation issue (weak password, bad name, etc.)
-- `409 USER_EXISTS`
-- `429 RATE_LIMITED` — repeat attempt within 60s
-- `502 EMAIL_SEND_FAILED`
+- `400 VALIDATION_FAILED`. Zod validation issue (weak password, bad name, etc.).
+- `409 USER_EXISTS`.
+- `429 RATE_LIMITED`. Repeat attempt within 60s.
+- `502 EMAIL_SEND_FAILED`.
 
 ### `POST /verify/:token`
 
@@ -80,12 +80,12 @@ Error codes: `400 TOKEN_REQUIRED`, `400 VERIFY_LINK_EXPIRED`, `409 USER_EXISTS`.
 
 ### `POST /resend-verification`
 
-Auth: **no**. Best-effort; never reveals account existence.
+Auth: **no**. Best-effort. Never reveals account existence.
 
 ### `POST /login`
 
-Auth: **no**. Validates credentials, mails a 6-digit OTP, returns immediately
-(no auth cookies yet — those land after `/verify`).
+Auth: **no**. Validates credentials, mails a 6-digit OTP, returns immediately.
+No auth cookies yet. Those land after `/verify`.
 
 Request:
 ```json
@@ -120,11 +120,11 @@ Success `200`:
 ```
 
 Error codes:
-- `400 MISSING_FIELDS`, `400 INVALID_PAYLOAD`
-- `400 OTP_EXPIRED`
-- `400 INVALID_OTP` — message includes remaining attempts
-- `429 ACCOUNT_LOCKED` — after 5 wrong attempts; 15-minute lockout
-- `400 USER_NOT_FOUND`
+- `400 MISSING_FIELDS`, `400 INVALID_PAYLOAD`.
+- `400 OTP_EXPIRED`.
+- `400 INVALID_OTP`. Message includes remaining attempts.
+- `429 ACCOUNT_LOCKED`. After 5 wrong attempts. 15-minute lockout.
+- `400 USER_NOT_FOUND`.
 
 ### `POST /resend-otp`
 

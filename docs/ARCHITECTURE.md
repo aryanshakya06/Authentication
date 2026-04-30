@@ -1,8 +1,8 @@
 # Architecture
 
 Authly is split into a single Express API and a Vite-built React SPA. State
-that must persist between requests lives in **MongoDB** (long-term: users)
-and **Redis** (short-term: sessions, OTPs, CSRF tokens, rate-limit counters,
+that must persist between requests lives in **MongoDB** (long-term, users)
+and **Redis** (short-term, sessions, OTPs, CSRF tokens, rate-limit counters,
 pending-signup blobs, password-reset tokens, OTP-attempt counters).
 
 ## Request flows
@@ -46,14 +46,14 @@ Browser                 Frontend          Express              Redis        SMTP
    |  POST /verify {email,otp}                |                  |           |
    |------------------------>|---- POST /api/v1/verify -------->|           |
    |                         |                |  GET otp:<email>                  |
-   |                         |                |  if mismatch: INCR otp-attempts:* |
+   |                         |                |  if mismatch INCR otp-attempts:*  |
    |                         |                |    if >= 5  -> SET otp-lockout:*  |
    |                         |                |               EX 900              |
-   |                         |                |  if match:                         |
+   |                         |                |  if match                         |
    |                         |                |    DEL otp:* + otp-attempts:*      |
    |                         |                |    sign accessToken (15m)          |
    |                         |                |    sign refreshToken (7d)          |
-   |                         |                |    if existing active_session: invalidate previous
+   |                         |                |    if existing active_session, invalidate previous
    |                         |                |    SET refresh_token:<uid>         |
    |                         |                |    SET active_session:<uid>=sid    |
    |                         |                |    SET session:<sid>={metadata}    |
@@ -71,7 +71,7 @@ Browser            Express                                 Redis
   -------------------->
                        verifyRefreshToken(refreshCookie)
                        jwt.verify -> {id, sessionId}
-                       GET refresh_token:<uid> ===  cookie?
+                       GET refresh_token:<uid> === cookie?
                        GET active_session:<uid> === sessionId?
                        GET session:<sid>?
                        update lastActivity
@@ -109,10 +109,10 @@ Browser                  Express                  Redis       SMTP
 
 | Concern                     | Why it lives in Redis                                      |
 | --------------------------- | ----------------------------------------------------------- |
-| Pending sign-ups            | Self-expiring 5-minute store; no zombie unverified users    |
-| Sessions / refresh tokens   | Server-side revocation, single-active-session enforcement   |
+| Pending sign-ups            | Self-expiring 5-minute store. No zombie unverified users    |
+| Sessions and refresh tokens | Server-side revocation, single-active-session enforcement   |
 | CSRF token                  | TTL'd, replaceable per session                              |
-| OTPs + attempt counters     | Cheap atomic INCR + EXPIRE                                  |
+| OTPs and attempt counters   | Cheap atomic INCR and EXPIRE                                |
 | Per-IP rate limiting        | High-throughput counters with TTLs                          |
 | Password reset tokens       | One-shot, short-lived, unguessable                          |
 
@@ -126,45 +126,45 @@ Browser                  Express                  Redis       SMTP
 
 ## Frontend theming
 
-Multi-theme is implemented entirely in CSS — no React rerenders for color
+Multi-theme is implemented entirely in CSS. No React rerenders for color
 changes, no JS color branching, no new dependencies.
 
 ```
-On first visit / on every reload:
+On first visit or on every reload
 
    <html>          index.html (head)
-   ───────         ─────────────────
-                       │
-                       ▼
+   ------          -----------------
+                       |
+                       v
             blocking inline <script>
-            ─────────────────────────
+            ------------------------
             const stored = localStorage["authly:theme"]
-            const pick   = stored ∈ VALID ? stored : "authly"
+            const pick   = stored in VALID ? stored : "purple-night"
             document.documentElement.setAttribute("data-theme", pick)
-                       │
-                       ▼
+                       |
+                       v
                  first paint
-                 ───────────
+                 -----------
             CSS [data-theme="<pick>"] block applies
             page paints with the right tokens immediately
 
-When the user clicks a theme card:
+When the user clicks a theme card
 
-   ThemePicker.jsx ── setTheme(id) ──► ThemeContext
-                                          │
-                                          ▼
+   ThemePicker.jsx -- setTheme(id) --> ThemeContext
+                                          |
+                                          v
                               localStorage.setItem("authly:theme", id)
                               <html data-theme={id}>
-                                          │
-                                          ▼
-                              every CSS var cascades — instant repaint
+                                          |
+                                          v
+                              every CSS var cascades. Instant repaint.
 ```
 
 Tokens declared per theme:
 
 ```
---bg, --bg-elev, --bg-input, --bg-muted     # backgrounds (page/card/input/subtle)
---fg, --fg-muted, --fg-faint                # text (primary/secondary/tertiary)
+--bg, --bg-elev, --bg-input, --bg-muted     # backgrounds (page, card, input, subtle)
+--fg, --fg-muted, --fg-faint                # text (primary, secondary, tertiary)
 --line, --line-strong                       # borders
 --brand, --brand-hover, --brand-soft        # primary accent + hover + tinted bg
 --on-brand                                  # text/icon color on top of --brand
@@ -173,10 +173,11 @@ Tokens declared per theme:
 --hero-grad                                 # the gradient used in hero/banner
 ```
 
-Tailwind v4 `@theme inline { --color-page: var(--bg); ... }` exposes these
-as utility classes (`bg-page`, `bg-card`, `text-fg`, `bg-brand`,
-`text-on-brand`, `border-line`, etc.) so JSX stays clean.
+Components in `src/index.css` use these tokens directly through plain CSS
+classes (`.btn`, `.btn--primary`, `.form-card`, `.welcome`, `.tile`, etc.).
+There is no UI framework, no preprocessor, and no utility-class system.
+JSX references the class names by hand.
 
-Adding a 7th theme is three steps: a new CSS file, a registry entry, and
+Adding a 7th theme is three steps. A new CSS file, a registry entry, and
 the id in the inline-script `VALID` array. The smoke test
 (`npm run smoke` from `frontend/`) catches missing pieces.
