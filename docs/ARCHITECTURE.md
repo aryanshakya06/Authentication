@@ -123,3 +123,60 @@ Browser                  Express                  Redis       SMTP
 | `accessToken`  | JWT, sent on every request       | 15 min | yes      | env-aware (none+secure prod / lax+http dev) |
 | `refreshToken` | JWT, sent only to /refresh logic | 7 d    | yes      | same                               |
 | `csrfToken`    | Read by frontend, echoed in header | 1 h  | **no**   | same                               |
+
+## Frontend theming
+
+Multi-theme is implemented entirely in CSS — no React rerenders for color
+changes, no JS color branching, no new dependencies.
+
+```
+On first visit / on every reload:
+
+   <html>          index.html (head)
+   ───────         ─────────────────
+                       │
+                       ▼
+            blocking inline <script>
+            ─────────────────────────
+            const stored = localStorage["authly:theme"]
+            const pick   = stored ∈ VALID ? stored : "authly"
+            document.documentElement.setAttribute("data-theme", pick)
+                       │
+                       ▼
+                 first paint
+                 ───────────
+            CSS [data-theme="<pick>"] block applies
+            page paints with the right tokens immediately
+
+When the user clicks a theme card:
+
+   ThemePicker.jsx ── setTheme(id) ──► ThemeContext
+                                          │
+                                          ▼
+                              localStorage.setItem("authly:theme", id)
+                              <html data-theme={id}>
+                                          │
+                                          ▼
+                              every CSS var cascades — instant repaint
+```
+
+Tokens declared per theme:
+
+```
+--bg, --bg-elev, --bg-input, --bg-muted     # backgrounds (page/card/input/subtle)
+--fg, --fg-muted, --fg-faint                # text (primary/secondary/tertiary)
+--line, --line-strong                       # borders
+--brand, --brand-hover, --brand-soft        # primary accent + hover + tinted bg
+--on-brand                                  # text/icon color on top of --brand
+--success, --danger, --warning              # semantic
+--ring                                      # focus ring
+--hero-grad                                 # the gradient used in hero/banner
+```
+
+Tailwind v4 `@theme inline { --color-page: var(--bg); ... }` exposes these
+as utility classes (`bg-page`, `bg-card`, `text-fg`, `bg-brand`,
+`text-on-brand`, `border-line`, etc.) so JSX stays clean.
+
+Adding a 7th theme is three steps: a new CSS file, a registry entry, and
+the id in the inline-script `VALID` array. The smoke test
+(`npm run smoke` from `frontend/`) catches missing pieces.
