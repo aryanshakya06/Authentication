@@ -1,373 +1,281 @@
-export const getOtpHtml = ({ email, otp }) => {
-  const html = `<!DOCTYPE html>
+// Modern, professional, mail-client-safe email templates.
+//
+// Design intent (different from the previous dark-header look):
+//   - Soft neutral page (#f5f5f7) with a clean white card.
+//   - Brand mark + thin two-color gradient rule at the top of the card.
+//   - Generous whitespace, refined typography, no boxes-inside-boxes.
+//   - OTP rendered as oversized, letter-spaced monospace numerals.
+//   - All layout uses tables + inline styles for Outlook / iOS / Gmail.
+//   - System font stack so Inter renders where supported, falls back gracefully.
+//
+// Each public function returns a complete HTML document.
+
+const escape = (s = "") =>
+    String(s)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+
+const APP_NAME = () => process.env.APP_NAME || "Authly";
+const FRONTEND = () =>
+    (process.env.FRONTEND_URL || "http://localhost:5173").replace(/\/+$/, "");
+
+// Shared layout shell.
+// `pretitle` is a short uppercase eyebrow (e.g. "Account verification").
+// `headline` is the big H1 line.
+// `body` is the inline HTML for the main content area.
+// `cta` is optional { label, url } for a primary button.
+// `meta` is an array of small footer metadata strings shown above the legal footer.
+const shell = ({ pretitle, headline, preview, body, cta, meta = [] }) => {
+    const app = APP_NAME();
+    const year = new Date().getFullYear();
+    const ctaBlock = cta
+        ? `
+    <table role="presentation" border="0" cellspacing="0" cellpadding="0" align="left" style="margin:24px 0 8px;">
+      <tr>
+        <td align="center" bgcolor="#4f46e5" style="border-radius:8px;background:linear-gradient(90deg,#4f46e5 0%,#a855f7 50%,#ec4899 100%);">
+          <a href="${cta.url}" target="_blank" rel="noopener"
+             style="display:inline-block;padding:14px 26px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,sans-serif;font-size:14px;font-weight:600;line-height:1;letter-spacing:0.2px;color:#ffffff !important;text-decoration:none;border-radius:8px;">
+            ${escape(cta.label)}
+          </a>
+        </td>
+      </tr>
+    </table>`
+        : "";
+
+    const metaBlock = meta.length
+        ? `<p style="margin:0 0 6px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,sans-serif;font-size:11px;line-height:1.6;color:#9ca3af;">
+        ${meta.map(escape).join(" &middot; ")}
+       </p>`
+        : "";
+
+    return `<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
+<meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 <meta name="x-apple-disable-message-reformatting" />
-<title>{{APP_NAME}} Verification Code</title>
-<style>
-/* Base reset */
-html, body { margin: 0; padding: 0; }
-body {
-  background: #f6f7fb;
-  color: #111;
-  -webkit-text-size-adjust: 100%;
-  -ms-text-size-adjust: 100%;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, 'Apple Color Emoji','Segoe UI Emoji','Segoe UI Symbol', sans-serif;
-}
-table { border-collapse: collapse; }
-img {
-  border: 0;
-  line-height: 100%;
-  outline: none;
-  text-decoration: none;
-  display: block;
-  max-width: 100%;
-  height: auto;
-}
-/* Layout */
-.wrapper { width: 100%; background: #f6f7fb; }
-.outer { width: 100%; }
-.container {
-  width: 600px;
-  max-width: 600px;
-  background: #ffffff;
-  border-radius: 12px;
-  overflow: hidden;
-  border: 1px solid #e9ecf3;
-}
-.p-24 { padding: 24px; }
-.p-32 { padding: 32px; }
-.header {
-  background: #111827;
-  padding: 18px 24px;
-  text-align: center;
-}
-.brand {
-  display: inline-block;
-  color: #ffffff;
-  font-weight: 700;
-  font-size: 16px;
-  letter-spacing: 0.3px;
-  text-decoration: none;
-}
-.title {
-  margin: 0 0 12px 0;
-  font-size: 22px;
-  line-height: 1.3;
-  color: #111;
-  font-weight: 700;
-}
-.text {
-  margin: 0 0 16px 0;
-  font-size: 15px;
-  line-height: 1.6;
-  color: #444;
-}
-.muted {
-  color: #555;
-  font-size: 14px;
-  line-height: 1.6;
-  margin: 0 0 12px 0;
-}
-/* OTP badge */
-.otp-wrap { margin: 20px 0; width: 100%; }
-.otp {
-  display: inline-block;
-  background: #f3f4f6;
-  border: 1px solid #e5e7eb;
-  border-radius: 10px;
-  padding: 14px 18px;
-  font-size: 32px;
-  letter-spacing: 10px;
-  font-weight: 700;
-  color: #111;
-  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-}
-/* Button (optional) */
-.btn {
-  display: inline-block;
-  background: #111827;
-  color: #ffffff !important;
-  text-decoration: none;
-  padding: 12px 18px;
-  border-radius: 8px;
-  font-weight: 600;
-  font-size: 14px;
-}
-/* Footer */
-.footer {
-  text-align: center;
-  color: #6b7280;
-  font-size: 12px;
-  line-height: 1.6;
-  padding: 16px 24px 0 24px;
-}
-/* Responsive */
-@media only screen and (max-width: 600px) {
-  .container { width: 100% !important; }
-  .p-32 { padding: 24px !important; }
-  .otp {
-    font-size: 28px !important;
-    letter-spacing: 6px !important;
-  }
-}
+<meta name="color-scheme" content="light only" />
+<meta name="supported-color-schemes" content="light" />
+<title>${escape(app)}</title>
+<!--[if mso]>
+<style type="text/css">
+  body, table, td, p, a { font-family: 'Segoe UI', Arial, sans-serif !important; }
 </style>
+<![endif]-->
 </head>
-<body>
-<table role="presentation" class="wrapper" width="100%" border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td align="center" class="p-24">
-<table role="presentation" class="container" border="0" cellspacing="0" cellpadding="0">
-<!-- Header -->
-<tr>
-<td class="header">
-<span class="brand">Authentication App</span>
-</td>
-</tr>
-<!-- Body -->
-<tr>
-<td class="p-32">
-<h1 class="title">Verify your email - ${email}</h1>
-<p class="text">
-Use the verification code below to complete your sign-in to Authentication App.
-</p>
-<!-- OTP -->
-<table role="presentation" class="otp-wrap" border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td align="center">
-<div class="otp">${otp}</div>
-</td>
-</tr>
-</table>
-<p class="muted">This code will expire in <strong>5 minutes</strong>.</p>
-<p class="muted">If this wasn’t initiated, this email can be safely ignored.</p>
-</td>
-</tr>
-<!-- Footer -->
-<tr>
-<td class="footer">
- 2025 Authentication App. All rights reserved.
-</td>
-</tr>
-<tr>
-<td height="16" aria-hidden="true"></td>
-</tr>
-</table>
-</td>
-</tr>
-</table>
+<body style="margin:0;padding:0;background:#f5f5f7;">
+  <!-- Hidden preheader for inbox preview text -->
+  <div style="display:none;font-size:1px;color:#f5f5f7;line-height:1px;max-height:0px;max-width:0px;opacity:0;overflow:hidden;">
+    ${escape(preview || "")}
+  </div>
+
+  <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" bgcolor="#f5f5f7" style="background:#f5f5f7;">
+    <tr>
+      <td align="center" style="padding:40px 16px;">
+
+        <!-- Outer card -->
+        <table role="presentation" width="560" border="0" cellspacing="0" cellpadding="0" style="width:100%;max-width:560px;background:#ffffff;border:1px solid #ececf1;border-radius:14px;overflow:hidden;box-shadow:0 1px 2px rgba(17,24,39,0.04);">
+
+          <!-- Brand row -->
+          <tr>
+            <td style="padding:28px 36px 0 36px;">
+              <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0">
+                <tr>
+                  <td align="left" style="vertical-align:middle;">
+                    <table role="presentation" border="0" cellspacing="0" cellpadding="0">
+                      <tr>
+                        <td bgcolor="#4f46e5" style="background:#4f46e5;border-radius:8px;width:32px;height:32px;text-align:center;vertical-align:middle;">
+                          <span style="display:inline-block;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,sans-serif;font-size:16px;font-weight:700;color:#ffffff;line-height:32px;">A</span>
+                        </td>
+                        <td style="padding-left:10px;vertical-align:middle;">
+                          <span style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,sans-serif;font-size:15px;font-weight:600;color:#111827;letter-spacing:-0.01em;">
+                            ${escape(app)}
+                          </span>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Gradient rule -->
+          <tr>
+            <td style="padding:18px 36px 0 36px;">
+              <div style="height:3px;background:linear-gradient(90deg,#4f46e5 0%,#a855f7 50%,#ec4899 100%);border-radius:2px;line-height:3px;font-size:0;">&nbsp;</div>
+            </td>
+          </tr>
+
+          <!-- Eyebrow + headline -->
+          <tr>
+            <td style="padding:24px 36px 0 36px;">
+              <p style="margin:0 0 8px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,sans-serif;font-size:11px;line-height:1.4;color:#6366f1;letter-spacing:0.12em;text-transform:uppercase;font-weight:600;">
+                ${escape(pretitle)}
+              </p>
+              <h1 style="margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,sans-serif;font-size:26px;line-height:1.2;color:#111827;font-weight:700;letter-spacing:-0.02em;">
+                ${escape(headline)}
+              </h1>
+            </td>
+          </tr>
+
+          <!-- Body content -->
+          <tr>
+            <td style="padding:18px 36px 0 36px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,sans-serif;font-size:15px;line-height:1.65;color:#374151;">
+              ${body}
+              ${ctaBlock}
+            </td>
+          </tr>
+
+          <!-- Divider -->
+          <tr>
+            <td style="padding:28px 36px 0 36px;">
+              <div style="height:1px;background:#ececf1;line-height:1px;font-size:0;">&nbsp;</div>
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="padding:18px 36px 28px 36px;">
+              ${metaBlock}
+              <p style="margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,sans-serif;font-size:11px;line-height:1.6;color:#9ca3af;">
+                &copy; ${year} ${escape(app)} &middot; Sent because you have an account or requested this action.
+              </p>
+            </td>
+          </tr>
+
+        </table>
+
+      </td>
+    </tr>
+  </table>
 </body>
 </html>`;
-  return html;
+};
+
+export const getOtpHtml = ({ email, otp }) => {
+    const safeEmail = escape(email);
+    const otpDigits = String(otp).split("").map(escape).join('<span style="display:inline-block;width:0.18em;">&nbsp;</span>');
+    const body = `
+      <p style="margin:0 0 18px;">
+        Use the verification code below to finish signing in to your account
+        <strong style="color:#111827;">${safeEmail}</strong>.
+      </p>
+
+      <table role="presentation" border="0" cellspacing="0" cellpadding="0" width="100%">
+        <tr>
+          <td align="center" style="padding:8px 0 4px;">
+            <div style="font-family:'SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace;font-size:42px;font-weight:700;color:#111827;letter-spacing:0.12em;line-height:1.1;background:linear-gradient(90deg,#4f46e5 0%,#a855f7 50%,#ec4899 100%);-webkit-background-clip:text;background-clip:text;color:transparent;mso-text-raise:0;">
+              ${otpDigits}
+            </div>
+            <!--[if mso]>
+            <div style="font-family:Consolas,monospace;font-size:42px;font-weight:700;color:#4f46e5;letter-spacing:0.12em;">
+              ${escape(otp)}
+            </div>
+            <![endif]-->
+          </td>
+        </tr>
+      </table>
+
+      <p style="margin:18px 0 0;color:#6b7280;font-size:13px;">
+        This code expires in <strong style="color:#111827;">5 minutes</strong> and may only be used once.
+      </p>
+      <p style="margin:8px 0 0;color:#6b7280;font-size:13px;">
+        Didn&rsquo;t request this? You can safely ignore the email &mdash; no action is required.
+      </p>
+    `;
+
+    return shell({
+        pretitle: "Verification code",
+        headline: "Confirm it&rsquo;s you",
+        preview: `Your one-time code is ${otp}. Expires in 5 minutes.`,
+        body,
+        meta: [
+            "Code valid for 5 minutes",
+            "Single-use",
+            `Requested for ${escape(email)}`
+        ]
+    });
 };
 
 export const getVerifyEmailHtml = ({ email, token }) => {
-  const appName = process.env.APP_NAME || "Authly";
-  const baseUrl = process.env.FRONTEND_URL || "http://localhost:5173";
-  const verifyUrl = `${baseUrl.replace(/\/+$/, "")}/token/${encodeURIComponent(token)}`;
+    const verifyUrl = `${FRONTEND()}/token/${encodeURIComponent(token)}`;
+    const body = `
+      <p style="margin:0 0 12px;">
+        You&rsquo;re almost done. Click the button below to verify
+        <strong style="color:#111827;">${escape(email)}</strong> and finish creating your ${escape(APP_NAME())} account.
+      </p>
+      <p style="margin:0;color:#6b7280;font-size:13px;">
+        For your safety, this link expires in <strong style="color:#111827;">5 minutes</strong> and works only once.
+      </p>
 
-  const html = `<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<meta name="x-apple-disable-message-reformatting" />
-<title>${appName} Verify Your Account</title>
-<style>
-/* Base reset */
-html, body { margin: 0; padding: 0; }
-body {
-  background: #f6f7fb;
-  color: #111;
-  -webkit-text-size-adjust: 100%;
-  -ms-text-size-adjust: 100%;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, 'Apple Color Emoji','Segoe UI Emoji','Segoe UI Symbol', sans-serif;
-}
-table { border-collapse: collapse; }
-img {
-  border: 0;
-  line-height: 100%;
-  outline: none;
-  text-decoration: none;
-  display: block;
-  max-width: 100%;
-  height: auto;
-}
-/* Layout */
-.wrapper { width: 100%; background: #f6f7fb; }
-.container {
-  width: 600px;
-  max-width: 600px;
-  background: #ffffff;
-  border-radius: 12px;
-  overflow: hidden;
-  border: 1px solid #e9ecf3;
-}
-.p-24 { padding: 24px; }
-.p-32 { padding: 32px; }
-.header {
-  background: #111827;
-  padding: 18px 24px;
-  text-align: center;
-}
-.brand {
-  display: inline-block;
-  color: #ffffff;
-  font-weight: 700;
-  font-size: 16px;
-  letter-spacing: 0.3px;
-  text-decoration: none;
-}
-.title {
-  margin: 0 0 12px 0;
-  font-size: 22px;
-  line-height: 1.3;
-  color: #111;
-  font-weight: 700;
-}
-.text {
-  margin: 0 0 16px 0;
-  font-size: 15px;
-  line-height: 1.6;
-  color: #444;
-}
-.muted {
-  color: #555;
-  font-size: 14px;
-  line-height: 1.6;
-  margin: 0 0 12px 0;
-}
-/* Button */
-.btn {
-  display: inline-block;
-  background: #111827;
-  color: #ffffff !important;
-  text-decoration: none;
-  padding: 12px 18px;
-  border-radius: 8px;
-  font-weight: 600;
-  font-size: 14px;
-}
-/* Footer */
-.footer {
-  text-align: center;
-  color: #6b7280;
-  font-size: 12px;
-  line-height: 1.6;
-  padding: 16px 24px 0 24px;
-}
-/* Link fallback */
-.link {
-  color: #111827;
-  text-decoration: underline;
-  word-break: break-all;
-}
-/* Responsive */
-@media only screen and (max-width: 600px) {
-  .container { width: 100% !important; }
-  .p-32 { padding: 24px !important; }
-}
-</style>
-</head>
-<body>
-<table role="presentation" class="wrapper" width="100%" border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td align="center" class="p-24">
-<table role="presentation" class="container" border="0" cellspacing="0" cellpadding="0">
-<!-- Header -->
-<tr>
-<td class="header">
-<span class="brand">${appName}</span>
-</td>
-</tr>
-<!-- Body -->
-<tr>
-<td class="p-32">
-<h1 class="title">Verify your account - ${email}</h1>
-<p class="text">
-Thanks for registering with ${appName}. Click the button below to verify your account.
-</p>
-<!-- Button -->
-<table role="presentation" border="0" cellspacing="0" cellpadding="0" style="margin:16px 0 20px 0;">
-<tr>
-<td align="center">
-<a class="btn" href="${verifyUrl}" target="_blank" rel="noopener">Verify account</a>
-</td>
-</tr>
-</table>
-<p class="muted">If the button doesn’t work, copy and paste this link into your browser:</p>
-<p class="muted">
-<a class="link" href="${verifyUrl}" target="_blank" rel="noopener">${verifyUrl}</a>
-</p>
-<p class="muted">If this wasn’t you, you can safely ignore this email.</p>
-</td>
-</tr>
-<!-- Footer -->
-<tr>
-<td class="footer">
- ${new Date().getFullYear()} ${appName}. All rights reserved.
-</td>
-</tr>
-<tr><td height="16" aria-hidden="true"></td></tr>
-</table>
-</td>
-</tr>
-</table>
-</body>
-</html>`;
-  return html;
+      <table role="presentation" border="0" cellspacing="0" cellpadding="0" width="100%" style="margin-top:20px;">
+        <tr>
+          <td style="padding:14px 16px;background:#f9fafb;border:1px solid #ececf1;border-radius:10px;font-family:'SFMono-Regular',Consolas,Menlo,monospace;font-size:12px;color:#6b7280;word-break:break-all;line-height:1.5;">
+            If the button doesn&rsquo;t work, paste this link into your browser:<br />
+            <a href="${verifyUrl}" target="_blank" rel="noopener" style="color:#4f46e5;text-decoration:none;">${escape(verifyUrl)}</a>
+          </td>
+        </tr>
+      </table>
+    `;
+
+    return shell({
+        pretitle: "Account verification",
+        headline: "Verify your email address",
+        preview: `Click to verify ${email} and activate your account.`,
+        body,
+        cta: { label: "Verify my email", url: verifyUrl },
+        meta: [
+            "Link valid for 5 minutes",
+            "Single-use",
+            `Sent to ${escape(email)}`
+        ]
+    });
 };
 
 export const getPasswordResetHtml = ({ email, token }) => {
-  const appName = process.env.APP_NAME || "Authly";
-  const baseUrl = process.env.FRONTEND_URL || "http://localhost:5173";
-  const resetUrl = `${baseUrl.replace(/\/+$/, "")}/reset-password/${encodeURIComponent(token)}`;
+    const resetUrl = `${FRONTEND()}/reset-password/${encodeURIComponent(token)}`;
+    const body = `
+      <p style="margin:0 0 12px;">
+        We received a request to reset the password for
+        <strong style="color:#111827;">${escape(email)}</strong>. Click the button below to choose a new one.
+      </p>
+      <p style="margin:0;color:#6b7280;font-size:13px;">
+        This link is valid for <strong style="color:#111827;">15 minutes</strong>. After you reset, all of your active sessions will be signed out as a precaution.
+      </p>
 
-  return `<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>${appName} Password Reset</title>
-<style>
-html, body { margin: 0; padding: 0; }
-body { background:#f6f7fb; color:#111; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; }
-table { border-collapse:collapse; }
-.container { width:600px; max-width:600px; background:#fff; border-radius:12px; overflow:hidden; border:1px solid #e9ecf3; }
-.header { background:#111827; padding:18px 24px; text-align:center; }
-.brand { color:#fff; font-weight:700; font-size:16px; letter-spacing:0.3px; }
-.title { margin:0 0 12px 0; font-size:22px; line-height:1.3; color:#111; font-weight:700; }
-.text { margin:0 0 16px 0; font-size:15px; line-height:1.6; color:#444; }
-.muted { color:#555; font-size:14px; line-height:1.6; margin:0 0 12px 0; }
-.btn { display:inline-block; background:#111827; color:#ffffff !important; text-decoration:none; padding:12px 18px; border-radius:8px; font-weight:600; font-size:14px; }
-.link { color:#111827; text-decoration:underline; word-break:break-all; }
-.footer { text-align:center; color:#6b7280; font-size:12px; line-height:1.6; padding:16px 24px 0; }
-.p-32 { padding:32px; } .p-24 { padding:24px; }
-@media only screen and (max-width:600px) { .container { width:100% !important; } .p-32 { padding:24px !important; } }
-</style>
-</head>
-<body>
-<table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" style="background:#f6f7fb;">
-<tr><td align="center" class="p-24">
-<table role="presentation" class="container" border="0" cellspacing="0" cellpadding="0">
-<tr><td class="header"><span class="brand">${appName}</span></td></tr>
-<tr><td class="p-32">
-<h1 class="title">Reset your password - ${email}</h1>
-<p class="text">We received a request to reset your password. Click the button below to choose a new one. The link expires in 15 minutes.</p>
-<table role="presentation" border="0" cellspacing="0" cellpadding="0" style="margin:16px 0 20px 0;">
-<tr><td align="center"><a class="btn" href="${resetUrl}" target="_blank" rel="noopener">Reset password</a></td></tr>
-</table>
-<p class="muted">If the button doesn't work, copy this link into your browser:</p>
-<p class="muted"><a class="link" href="${resetUrl}" target="_blank" rel="noopener">${resetUrl}</a></p>
-<p class="muted">If you didn't request this, you can safely ignore this email.</p>
-</td></tr>
-<tr><td class="footer">${new Date().getFullYear()} ${appName}. All rights reserved.</td></tr>
-<tr><td height="16" aria-hidden="true"></td></tr>
-</table>
-</td></tr>
-</table>
-</body>
-</html>`;
+      <table role="presentation" border="0" cellspacing="0" cellpadding="0" width="100%" style="margin-top:20px;">
+        <tr>
+          <td style="padding:14px 16px;background:#fff7ed;border:1px solid #fed7aa;border-radius:10px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,sans-serif;font-size:13px;color:#9a3412;line-height:1.55;">
+            <strong style="color:#7c2d12;">Didn&rsquo;t request this?</strong> You can ignore this email &mdash; your password won&rsquo;t change. If this happens repeatedly, consider rotating your password and reviewing your sessions.
+          </td>
+        </tr>
+      </table>
+
+      <table role="presentation" border="0" cellspacing="0" cellpadding="0" width="100%" style="margin-top:14px;">
+        <tr>
+          <td style="padding:14px 16px;background:#f9fafb;border:1px solid #ececf1;border-radius:10px;font-family:'SFMono-Regular',Consolas,Menlo,monospace;font-size:12px;color:#6b7280;word-break:break-all;line-height:1.5;">
+            If the button doesn&rsquo;t work, paste this link into your browser:<br />
+            <a href="${resetUrl}" target="_blank" rel="noopener" style="color:#4f46e5;text-decoration:none;">${escape(resetUrl)}</a>
+          </td>
+        </tr>
+      </table>
+    `;
+
+    return shell({
+        pretitle: "Password reset",
+        headline: "Choose a new password",
+        preview: `Tap to reset your ${APP_NAME()} password. Link expires in 15 minutes.`,
+        body,
+        cta: { label: "Reset my password", url: resetUrl },
+        meta: [
+            "Link valid for 15 minutes",
+            "Single-use",
+            `Sent to ${escape(email)}`
+        ]
+    });
 };
