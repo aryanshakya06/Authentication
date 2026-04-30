@@ -51,7 +51,7 @@ export const THEMES = [
     }
 ];
 
-export const DEFAULT_THEME = "authly";
+export const DEFAULT_THEME = "purple-night";
 export const STORAGE_KEY = "authly:theme";
 export const VALID_THEME_IDS = THEMES.map((t) => t.id);
 

@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-theme="authly">
+<html lang="en" data-theme="purple-night">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -19,14 +19,14 @@
       (function () {
         try {
           var VALID = ["authly","rose","mint","purple-night","midnight-blue","obsidian"];
-          var DEFAULT = "authly";
+          var DEFAULT = "purple-night";
           var STORAGE_KEY = "authly:theme";
           var stored = null;
           try { stored = localStorage.getItem(STORAGE_KEY); } catch (e) {}
           var pick = (stored && VALID.indexOf(stored) !== -1) ? stored : DEFAULT;
           document.documentElement.setAttribute("data-theme", pick);
         } catch (e) {
-          document.documentElement.setAttribute("data-theme", "authly");
+          document.documentElement.setAttribute("data-theme", "purple-night");
         }
       })();
     </script>
